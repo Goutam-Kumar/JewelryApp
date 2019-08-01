@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/img_pic"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Backward"
+            android:textColor="@color/white"
+            android:id="@+id/btn_back"
+            android:background="@drawable/theme_button"
+            android:layout_gravity="left|center_vertical"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forward"
+            android:textColor="@color/white"
+            android:id="@+id/btn_forward"
+            android:background="@drawable/theme_button"
+            android:layout_gravity="right|center_vertical"
+            android:visibility="gone"/>
+
+
+
+
+
+        <LinearLayout
+            android:id="@+id/lin_cancel"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="30dp"
+            android:padding="5dp"
+            android:layout_gravity="right|top"
+            android:background="#99000000">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_cancel"
+                android:layout_gravity="right|top"
+                android:src="@drawable/ic_cancel_white_24dp"/>
+
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Jewelry</string>
+    <string name="title_activity_gallery">Gallery</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="tnc"><![CDATA[T&C- Price can be change at anytime]]></string>
+    <string name="search">Search</string>
+    <string name="name_search">Name Search</string>
+    <string name="gallery">Gallery</string>
+    <string name="filter">Filter</string>
+    <string name="price">Price</string>
+    <string name="sync">Sync</string>
+
+    <string-array name="category1">
+        <item>Order</item>
+        <item>Already Ordered</item>
+        <item>Stock</item>
+        <item>Not Final</item>
+    </string-array>
+
+    <string-array name="category2">
+        <item>Received</item>
+        <item>Unreceived</item>
+        <item>Finalized</item>
+        <item>Canceled</item>
+    </string-array>
+
+    <string-array name="rodium_option">
+        <item>Not Issue</item>
+        <item>Not Final</item>
+        <item>Final</item>
+    </string-array>
+</resources>
