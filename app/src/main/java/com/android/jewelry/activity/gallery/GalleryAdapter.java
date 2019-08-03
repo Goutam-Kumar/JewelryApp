@@ -42,6 +42,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ItemHold
     AlertDialog chooserDialog = null;
 
     public GalleryAdapter(Context context, List<DesignModel> adapterItems, IGalleryView iGalleryView) {
+        setHasStableIds(true);
         this.context = context;
         this.adapterItems = adapterItems;
         this.iGalleryView = iGalleryView;
@@ -183,6 +184,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ItemHold
     @Override
     public int getItemCount() {
         return adapterItems.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public class ItemHolder extends RecyclerView.ViewHolder {

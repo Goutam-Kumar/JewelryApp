@@ -184,15 +184,16 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
                 if (category == 0) {
                     if (checkedImageUri.size() > 0 && checkedImageUri.size() <= 30) {
                         Intent shareIntent = new Intent();
-                        shareIntent.setAction(Intent.ACTION_SEND);
-                        //Target whatsapp:
+                        //shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
                         shareIntent.setPackage("com.whatsapp");
-                        //Add text and then Image URI
                         Log.e("Image Path", "" + checkedImageUri.get(0));
                         ArrayList<Uri> list = new ArrayList<Uri>();
                         for (int i = 0; i < checkedImageUri.size(); i++) {
-                            list.add(checkedImageUri.get(i));
-
+                            File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + checkedImageUri.get(i));
+                            //Uri shareUri = Uri.fromFile(f);
+                            Uri shareUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName()+".provider", f);
+                            list.add(shareUri);
                         }
                         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, list);
                         shareIntent.putExtra(Intent.EXTRA_TEXT, "");
@@ -202,6 +203,9 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
                         try {
                             startActivity(shareIntent);
                         } catch (android.content.ActivityNotFoundException ex) {
+                            ex.printStackTrace();
+                        }catch (Exception ex){
+                            ex.printStackTrace();
                         }
                     } else if (checkedImageUri.size() > 30) {
                         Toast.makeText(GalleryActivity.this, "Sorry! You can't share more than 30 images at a time.", Toast.LENGTH_LONG).show();
@@ -397,10 +401,10 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       /* if (id == R.id.action_settings) {
             return true;
         }
-
+*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -411,18 +415,19 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            //reloadGallery();
+            startActivity(new Intent(GalleryActivity.this,GalleryActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        reloadGallery();
         } else if (id == R.id.nav_search) {
             searchJewelry();
         } else if (id == R.id.nav_settings) {
-            settingsApp();
-        } else if (id == R.id.nav_filter) {
             filterDesign();
+        } else if (id == R.id.nav_filter) {
+            settingsApp();
         } else if (id == R.id.nav_price) {
             priceSearch();
-        } else if (id == R.id.nav_sync) {
+        }/* else if (id == R.id.nav_sync) {
             syncJewelry();
-        }else if (id == R.id.name_search) {
+        }*/else if (id == R.id.name_search) {
             nameSearch();
         }
 
@@ -1478,7 +1483,6 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
         dialogBuilder.setTitle("Filter with Name Range");
         final AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1517,10 +1521,7 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
         LayoutInflater inflater = GalleryActivity.this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.price_category, null);
         dialogBuilder.setView(dialogView);
-
-
         dialogBuilder.setTitle("Select Sharing Category");
-
         RadioGroup radiogroup = (RadioGroup) dialogView.findViewById(R.id.radiogroup);
         RadioButton radioWithPrice = (RadioButton) dialogView.findViewById(R.id.radioWithPrice);
         RadioButton radioWithoutPrice = (RadioButton) dialogView.findViewById(R.id.radioWithoutPrice);
