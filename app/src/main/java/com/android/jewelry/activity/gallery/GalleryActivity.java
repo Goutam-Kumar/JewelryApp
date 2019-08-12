@@ -190,9 +190,11 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
                         Log.e("Image Path", "" + checkedImageUri.get(0));
                         ArrayList<Uri> list = new ArrayList<Uri>();
                         for (int i = 0; i < checkedImageUri.size(); i++) {
-                            File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + checkedImageUri.get(i));
+                            //File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + checkedImageUri.get(i));
+                            File f = new File(checkedImageUri.get(i).toString());
+                            Log.e("FileURI", ""+checkedImageUri.get(i));
                             //Uri shareUri = Uri.fromFile(f);
-                            Uri shareUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName()+".provider", f);
+                            Uri shareUri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID+".provider", f);
                             list.add(shareUri);
                         }
                         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, list);
@@ -268,25 +270,25 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
                     if (checkedImageUri.size() > 0 && checkedImageUri.size() <= 30) {
                         String caption = "";
                         Intent shareIntent = new Intent();
-                        shareIntent.setAction(Intent.ACTION_SEND);
-                        //Target whatsapp:
+                        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
                         shareIntent.setPackage("com.whatsapp");
-                        //Add text and then Image URI
                         Log.e("Image Path", "" + checkedImageUri.get(0));
                         ArrayList<Uri> list = new ArrayList<Uri>();
                         ArrayList<CharSequence> captionList = new ArrayList<CharSequence>();
-
                         for (int i = 0; i < checkedImageUri.size(); i++) {
-                            list.add(checkedImageUri.get(i));
+                            File f = new File(checkedImageUri.get(i).toString());
+                            Log.e("FileURI", ""+checkedImageUri.get(i));
+                            Uri shareUri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID+".provider", f);
+                            list.add(shareUri);
                         }
                         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, list);
+                        String shareText = "";
                         for (int i=0;i<checkedImageCost.size();i++){
                             caption = caption +" " + checkedImageName.get(i) + "=>" + checkedImageCost.get(i) +",";
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, "S:No-"+checkedImageCost.get(i));
+                            shareText+=" "+"S:No-"+checkedImageCost.get(i);
                         }
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
                         shareIntent.setType("image/*");
-                        //shareIntent.putExtra(Intent.EXTRA_TEXT, caption);
-
                         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         try {
