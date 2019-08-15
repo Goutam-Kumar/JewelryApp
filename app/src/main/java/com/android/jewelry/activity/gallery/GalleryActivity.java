@@ -282,12 +282,10 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
                             list.add(shareUri);
                         }
                         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, list);
-                        String shareText = "";
                         for (int i=0;i<checkedImageCost.size();i++){
                             caption = caption +" " + checkedImageName.get(i) + "=>" + checkedImageCost.get(i) +",";
-                            shareText+=" "+"S:No-"+checkedImageCost.get(i);
+                            shareIntent.putExtra(Intent.EXTRA_TEXT, "S:No-"+checkedImageCost.get(i));
                         }
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
                         shareIntent.setType("image/*");
                         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -418,7 +416,7 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
 
         if (id == R.id.nav_gallery) {
             startActivity(new Intent(GalleryActivity.this,GalleryActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        reloadGallery();
+            reloadGallery();
         } else if (id == R.id.nav_search) {
             searchJewelry();
         } else if (id == R.id.nav_settings) {
@@ -427,9 +425,9 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
             settingsApp();
         } else if (id == R.id.nav_price) {
             priceSearch();
-        }/* else if (id == R.id.nav_sync) {
+        } else if (id == R.id.nav_sync) {
             syncJewelry();
-        }*/else if (id == R.id.name_search) {
+        }else if (id == R.id.name_search) {
             nameSearch();
         }
 
@@ -1569,6 +1567,79 @@ public class GalleryActivity extends AppCompatActivity implements NavigationView
 
     private void syncJewelry() {
         //Sync
+        final ProgressDialog progressDialog = new ProgressDialog(GalleryActivity.this);
+        progressDialog.setMessage("Please Wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
+
+        StringRequest streq = new VolleyRequestHandler().GeneralVolleyRequest(
+                getApplicationContext(),
+                0,
+                getJewelry,
+                new VolleyRequestHandler.VolleyCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONArray userArray = new JSONArray(result);
+                            if (userArray.length() > 0) {
+                                for (int i = 0; i < userArray.length(); i++){
+                                    JSONObject jewelry = userArray.getJSONObject(i);
+                                    String name = jewelry.optString("name");
+                                    String cost = jewelry.optString("cost");
+                                    if (db.getProductExistorNot(name) == 1){
+                                        db.updateCost(name,Integer.parseInt(cost));
+
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        checkedImageCost.clear();
+                        checkedImageUri.clear();
+                        checkedImageName.clear();
+                        adapterItems.clear();
+                        jewelryList = db.getAllFace();
+                        for (DesignModel f : jewelryList) {
+                            final String path = f.getDesignUri();
+                            File file = new File(path);
+                            Uri uri = Uri.fromFile(file);
+                            adapterItems.add(f);
+                        }
+
+                        for (int i = 0; i < adapterItems.size(); i++) {
+                            adapterItems.get(i).setSelected(0);
+                        }
+
+                        rcvGallery.setLayoutManager(new GridLayoutManager(GalleryActivity.this, 2));
+                        galleryAdapter = new GalleryAdapter(GalleryActivity.this,adapterItems,GalleryActivity.this);
+                        rcvGallery.setAdapter(galleryAdapter);
+                        //counter = 0;
+                        //labelUpdate();
+                        if (progressDialog.isShowing()){
+                            progressDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String fail) {
+                        VolleyLog.e("Tag", fail);
+                        if (progressDialog.isShowing()){
+                            progressDialog.dismiss();
+                        }
+                    }
+                }
+        );
+
+        streq.setRetryPolicy(new DefaultRetryPolicy(
+                ApiConstants.TIMEOUT_MS,
+                ApiConstants.DEFAULT_RETRY,
+                ApiConstants.FLOAT_FRACTION
+        ));
+
+        Volley.newRequestQueue(getApplicationContext()).add(streq);
     }
 
     private void priceSearch() {
